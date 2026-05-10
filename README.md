@@ -19,10 +19,11 @@
 
 ## 📁 仓库目录结构
 
-本仓库包含两个核心部分：
+本仓库包含三个核心部分：
 
 - `pm_workflow_template/`：包含工作流的核心指令定义（`pm_workflow_definition.md`）、标准 PRD 模板（`prd_template.md`）和详细的使用指南。
 - `agile-pm-workflow_skill/`：已经封装好的 Trae/Cursor 专属 AI 技能（Skill），支持一键安装调用。
+- `knowledge_base/`：**Agent 时代 PM 知识库（2026）** —— 由多 Agent 团队 wide & deep 调研、跨 100+ 一手信源整合而成的产品经理知识库，覆盖角色重塑、工作流范式、工具栈、评测体系、案例研究、治理合规、行动手册 7 个章节。详见 [`knowledge_base/README.md`](./knowledge_base/README.md)。
 
 ---
 
