@@ -3,6 +3,8 @@
 > **一个让"信息搬运型 PM"转型为"Builder PM / Agent PM"的完整知识库 + 工作流 + 技能插件**
 > Agile PM Workflow · Knowledge Base v2 · 2026
 
+> 🖼️ **[一页可视化导览图 →](./knowledge_base/infographic.html)** · 把 21 章 200+ 信源压缩到一屏的展览级 HTML(12 个 Panel,含交互式学习路径选择器、时间线、失败墙、定价决策树)。在浏览器里直接打开。
+
 ---
 
 ## 🎯 为什么需要这个项目

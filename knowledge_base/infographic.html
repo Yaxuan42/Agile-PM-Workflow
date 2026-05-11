@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PM-to-Builder · 2026 知识库导览图</title>
+<meta name="description" content="一张图读完 21 章 200+ 信源的 Builder PM 知识库:角色重塑、工具栈、Eval、案例、失败复盘、中国全景、前沿与定价。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --paper: #F2EFE9;
+    --paper-dark: #E8E3D9;
+    --ink: #111111;
+    --ink-soft: #2A2A2A;
+    --ink-mute: #6B665E;
+    --vermilion: #B43A2C;
+    --vermilion-deep: #8A2A1F;
+    --gold: #C49A2C;
+    --ocean: #1F3B4D;
+    --jade: #2D5C4A;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', 'Noto Serif SC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-serif-en { font-family: 'Playfair Display', serif; }
+  .font-serif-cn { font-family: 'Noto Serif SC', serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .text-vermilion { color: var(--vermilion); }
+  .bg-vermilion { background: var(--vermilion); }
+  .border-vermilion { border-color: var(--vermilion); }
+  .text-gold { color: var(--gold); }
+  .bg-paper-dark { background: var(--paper-dark); }
+  .border-ink { border-color: var(--ink); }
+  .border-ink-mute { border-color: var(--ink-mute); }
+  .text-ink-mute { color: var(--ink-mute); }
+
+  /* Editorial grain */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' /></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/></svg>");
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+  main, header, footer, section { position: relative; z-index: 2; }
+
+  /* Editorial stamp */
+  .stamp {
+    display: inline-block;
+    color: var(--vermilion);
+    border: 1.5px solid var(--vermilion);
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    transform: rotate(-2deg);
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+  }
+
+  /* Number display */
+  .num-display {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  /* Divider rules */
+  .rule-thick { height: 4px; background: var(--ink); }
+  .rule-thin { height: 1px; background: var(--ink); }
+  .rule-vermilion { height: 2px; background: var(--vermilion); }
+
+  /* Hover for chapter card */
+  .ch-card {
+    transition: all 0.15s ease;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+  }
+  .ch-card:hover {
+    background: var(--ink);
+    color: var(--paper);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--vermilion);
+  }
+  .ch-card:hover .ch-num { color: var(--vermilion); }
+  .ch-num { font-family: 'Playfair Display', serif; }
+
+  /* Tab */
+  .tab-btn {
+    transition: all 0.15s ease;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-btn.active {
+    border-bottom-color: var(--vermilion);
+    color: var(--vermilion);
+  }
+
+  /* Reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Vertical text */
+  .vtext { writing-mode: vertical-rl; text-orientation: mixed; }
+
+  /* Stat ticker */
+  .ticker {
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  /* Timeline */
+  .tl-axis { background: linear-gradient(90deg, transparent, var(--ink) 5%, var(--ink) 95%, transparent); height: 2px; }
+
+  /* Quotation */
+  blockquote.pull {
+    border-left: 4px solid var(--vermilion);
+    padding-left: 1rem;
+  }
+
+  /* Marquee */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .marquee-track { animation: marquee 60s linear infinite; }
+
+  /* Failure callout */
+  .failure-card {
+    background: #111;
+    color: var(--paper);
+    border: 1px solid var(--vermilion);
+  }
+
+  /* Path picker buttons */
+  .path-btn {
+    transition: all 0.15s ease;
+    border: 1.5px solid var(--ink);
+  }
+  .path-btn:hover, .path-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .path-btn.active::before { content: '▸ '; }
+
+  /* Chip */
+  .chip {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    border: 1px solid var(--ink);
+    margin-right: 4px;
+    margin-bottom: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .chip.red { background: var(--vermilion); color: var(--paper); border-color: var(--vermilion); }
+  .chip.ink { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* Bars */
+  .bar-bg { background: rgba(0,0,0,0.08); }
+  .bar-fill { background: var(--vermilion); height: 100%; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+  .bar-fill.ink { background: var(--ink); }
+  .bar-fill.gold { background: var(--gold); }
+
+  /* Decision tree */
+  .tree-node {
+    border: 1.5px solid var(--ink);
+    padding: 10px 14px;
+    background: var(--paper);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tree-node:hover { background: var(--ink); color: var(--paper); }
+  .tree-node.selected { background: var(--vermilion); color: var(--paper); border-color: var(--vermilion); }
+
+  /* Compare scrollers */
+  .scroll-x { overflow-x: auto; scrollbar-width: thin; }
+  .scroll-x::-webkit-scrollbar { height: 6px; }
+  .scroll-x::-webkit-scrollbar-thumb { background: var(--ink); }
+
+  /* Section dark */
+  .sec-dark {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .sec-dark .border-ink { border-color: var(--paper); }
+  .sec-dark .text-ink-mute { color: #8E8B85; }
+  .sec-dark .bar-bg { background: rgba(255,255,255,0.08); }
+
+  /* Nav scroll backdrop */
+  .nav-scrolled {
+    backdrop-filter: blur(10px);
+    background: rgba(242, 239, 233, 0.85);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  @media (max-width: 768px) {
+    .num-display.huge { font-size: 4rem !important; }
+    .vtext { writing-mode: horizontal-tb; }
+  }
+</style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- =================== NAV =================== -->
+<nav id="topnav" class="fixed top-0 inset-x-0 z-50 transition-all duration-200">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 py-3">
+    <a href="#top" class="flex items-baseline gap-2">
+      <span class="stamp">PM → BUILDER</span>
+      <span class="font-mono text-xs hidden md:inline text-ink-mute">v2 · 2026.05</span>
+    </a>
+    <div class="hidden md:flex gap-5 text-xs font-mono uppercase tracking-wider">
+      <a href="#divide" class="hover:text-vermilion">分化</a>
+      <a href="#stats" class="hover:text-vermilion">数字</a>
+      <a href="#timeline" class="hover:text-vermilion">时间线</a>
+      <a href="#chapters" class="hover:text-vermilion">21 章</a>
+      <a href="#failures" class="hover:text-vermilion">失败</a>
+      <a href="#economics" class="hover:text-vermilion">经济</a>
+      <a href="#china" class="hover:text-vermilion">中国</a>
+      <a href="#path" class="hover:text-vermilion">路径</a>
+    </div>
+    <a href="./README.md" class="text-xs font-mono uppercase border border-current px-3 py-1 hover:bg-vermilion hover:text-white hover:border-vermilion">索引</a>
+  </div>
+</nav>
+
+<!-- =================== HERO =================== -->
+<header id="top" class="min-h-screen sec-dark flex flex-col justify-between pt-20 pb-8">
+  <div class="max-w-7xl mx-auto w-full px-4 md:px-8 grow flex flex-col justify-center">
+    <div class="flex items-center gap-4 mb-8 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 01</span>
+      <span class="rule-thin grow"></span>
+      <span class="text-vermilion">A PROFESSION ON FIRE</span>
+      <span class="rule-thin grow"></span>
+      <span>2024 — 2027</span>
+    </div>
+
+    <h1 class="font-serif-en font-black text-6xl md:text-9xl leading-none tracking-tighter mb-6">
+      PM-to-<span class="text-vermilion">Builder</span>.
+    </h1>
+
+    <div class="grid md:grid-cols-12 gap-6 items-end">
+      <div class="md:col-span-7">
+        <p class="font-serif-cn text-2xl md:text-4xl font-bold leading-snug mb-4">
+          产品经理这个职业,正在被一次性<span class="text-vermilion">重铸</span>。
+        </p>
+        <p class="text-base md:text-lg text-ink-mute leading-relaxed font-serif-cn">
+          21 章 · 4895 行 · 200+ 一手信源 · 18 个并行 Agent 三轮深度调研。
+          下面这张图,是把它们压缩到一屏的入口。
+        </p>
+      </div>
+      <div class="md:col-span-5 space-y-3">
+        <blockquote class="pull">
+          <p class="text-sm leading-relaxed font-serif-cn">公司将裁掉数千个"信息搬运工" PM,再重新招聘数千个 AI-first、技能完全不同、薪酬更高的 Builder。</p>
+          <footer class="font-mono text-xs text-ink-mute mt-1">— Nikhyl Singhal, ex-CPO Meta / Google</footer>
+        </blockquote>
+        <blockquote class="pull">
+          <p class="text-sm leading-relaxed font-serif-cn">Prompt sets are the new PRDs. NLX is the new UX.</p>
+          <footer class="font-mono text-xs text-ink-mute mt-1">— Aparna Chennapragada, CPO Microsoft</footer>
+        </blockquote>
+        <blockquote class="pull">
+          <p class="text-sm leading-relaxed font-serif-cn">Evals are the new PRDs.</p>
+          <footer class="font-mono text-xs text-ink-mute mt-1">— Hamel Husain &amp; Shreya Shankar</footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marquee -->
+  <div class="ticker overflow-hidden font-mono text-xs uppercase tracking-widest py-2 mt-12">
+    <div class="marquee-track whitespace-nowrap inline-flex gap-12">
+      <span>● 全球 PM 岗位 +75% (从 2023 谷底)</span><span class="text-vermilion">● OpenAI PM 中位 $860K</span>
+      <span>● Anthropic 内部 90% 代码由 AI 编写</span><span>● Cursor: 50 人 / $2B ARR / 0 PM</span>
+      <span class="text-vermilion">● Claude Code: 9 个月到 $1B ARR</span><span>● Sierra: $15B 估值,$1.50/resolution</span>
+      <span>● PocketOS: 9 秒删生产库</span><span class="text-vermilion">● Step Finance: 9 秒 $40M 流失</span>
+      <span>● MCP 累计安装 9700 万</span><span>● AGENTS.md 已在 60,000+ 仓库</span>
+      <span class="text-vermilion">● DeepSeek V4 比 Opus 4.7 便宜 7×</span><span>● 中国日 Token 调用 140 万亿</span>
+      <span>● 全球 PM 岗位 +75% (从 2023 谷底)</span><span class="text-vermilion">● OpenAI PM 中位 $860K</span>
+      <span>● Anthropic 内部 90% 代码由 AI 编写</span><span>● Cursor: 50 人 / $2B ARR / 0 PM</span>
+      <span class="text-vermilion">● Claude Code: 9 个月到 $1B ARR</span><span>● Sierra: $15B 估值,$1.50/resolution</span>
+      <span>● PocketOS: 9 秒删生产库</span><span class="text-vermilion">● Step Finance: 9 秒 $40M 流失</span>
+    </div>
+  </div>
+</header>
+
+<!-- =================== THE DIVIDE =================== -->
+<section id="divide" class="py-20 md:py-32 border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 02</span><span class="rule-thin grow"></span><span class="text-vermilion">THE GREAT DIVIDE</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">Two Paths.</h2>
+    <p class="font-serif-cn text-xl text-ink-mute mb-12">PM 群体被一刀劈成两半。中间地带 12-24 个月内将被清空。</p>
+
+    <div class="grid md:grid-cols-2 gap-0 border border-ink">
+      <!-- Left: Information Mover -->
+      <div class="p-6 md:p-10 border-r border-ink relative" style="background: var(--paper-dark)">
+        <div class="absolute top-4 right-4 font-mono text-[10px] uppercase">⚠ ENDANGERED</div>
+        <div class="text-xs font-mono uppercase tracking-widest mb-3 text-ink-mute">A 类</div>
+        <h3 class="font-serif-cn text-4xl font-black mb-2">信息搬运工</h3>
+        <p class="font-mono text-sm mb-6">Information Mover</p>
+        <ul class="space-y-3 text-sm leading-relaxed font-serif-cn">
+          <li>· 靠协调、对齐、跨团队沟通存活</li>
+          <li>· 主要产物是 20+ 页 PRD 与状态周报</li>
+          <li>· 用 Notion / Confluence / Jira 编织"工作可见性"</li>
+          <li>· 季度 OKR 与年度 roadmap 是核心节奏</li>
+          <li>· 不写代码,不跑 eval,不读 paper</li>
+        </ul>
+        <div class="mt-8 pt-6 border-t border-ink">
+          <div class="text-xs font-mono uppercase mb-2">未来 24 月走向</div>
+          <div class="num-display text-5xl text-vermilion">↓ -60%</div>
+          <p class="text-xs text-ink-mute mt-2 font-serif-cn">Salesforce / Coinbase / Klarna 已开始裁减;Singhal 预测 "30,000 → 8,000 重招"</p>
+        </div>
+      </div>
+      <!-- Right: Builder -->
+      <div class="p-6 md:p-10 relative bg-vermilion text-paper" style="background: var(--vermilion); color: var(--paper);">
+        <div class="absolute top-4 right-4 font-mono text-[10px] uppercase">▲ ASCENDING</div>
+        <div class="text-xs font-mono uppercase tracking-widest mb-3" style="color: rgba(255,255,255,0.7)">B 类</div>
+        <h3 class="font-serif-cn text-4xl font-black mb-2">Builder PM / Agent PM</h3>
+        <p class="font-mono text-sm mb-6">Builder · Agent PM · Forward Deployed</p>
+        <ul class="space-y-3 text-sm leading-relaxed font-serif-cn">
+          <li>· 用 Claude Code / Lovable / v0 直接出 working prototype</li>
+          <li>· 主要产物是 <b>Eval Set + Capability Card + AGENTS.md</b></li>
+          <li>· 写 reward rubric,做错误分析,跑离线 / shadow eval</li>
+          <li>· 节奏跟着模型升级走(6 周 → 1 周 → 1 天)</li>
+          <li>· 边界蒸发:设计师写 PR、工程师做产品决策</li>
+        </ul>
+        <div class="mt-8 pt-6 border-t" style="border-color: rgba(255,255,255,0.3)">
+          <div class="text-xs font-mono uppercase mb-2">未来 24 月走向</div>
+          <div class="num-display text-5xl">$350-700K</div>
+          <p class="text-xs mt-2 font-serif-cn" style="color: rgba(255,255,255,0.85)">OpenAI median $860K · Anthropic $468-651K · Eval Engineer up to $759K</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adjacent roles strip -->
+    <div class="mt-8 grid grid-cols-2 md:grid-cols-5 gap-px bg-ink">
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">新角色</div>
+        <h4 class="font-bold mb-1">Agent PM</h4>
+        <p class="text-xs text-ink-mute">Sierra · Scale · Anthropic</p>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">爆发岗位</div>
+        <h4 class="font-bold mb-1">Forward Deployed Eng</h4>
+        <p class="text-xs text-ink-mute">+800% / +800% YoY · 均薪 $238K · Staff $630K+</p>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">趋势</div>
+        <h4 class="font-bold mb-1">Product Builder</h4>
+        <p class="text-xs text-ink-mute">Apollo · Linear · Vercel</p>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">顶薪职能</div>
+        <h4 class="font-bold mb-1">Eval Engineer</h4>
+        <p class="text-xs text-ink-mute">Arize · OpenAI · Anthropic · 50% PhD</p>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">非传统</div>
+        <h4 class="font-bold mb-1">Pro Vibe Coder</h4>
+        <p class="text-xs text-ink-mute">Lovable · 全部时间放在 "judgment / taste"</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== BY THE NUMBERS =================== -->
+<section id="stats" class="py-20 md:py-32 sec-dark border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 03</span><span class="rule-thin grow" style="background: var(--paper)"></span><span class="text-vermilion">BY THE NUMBERS</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">15 facts<br/>worth memorizing.</h2>
+    <p class="font-serif-cn text-xl mb-12" style="color: rgba(255,255,255,0.7)">所有数据均来自第 1-20 章一手信源(交叉验证),时间戳 2026-05。</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-paper">
+      <!-- Card -->
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl text-vermilion mb-2">75%</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">PM jobs from 2023 low</p>
+        <p class="text-sm font-serif-cn">PM 岗位三年最高水平;7,300+ 全球公开岗</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl mb-2">1.27×</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">PM : Designer ratio</p>
+        <p class="text-sm font-serif-cn">PM 多于设计师 — 历史上首次翻转</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl text-vermilion mb-2">$860K</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">OpenAI PM median TC</p>
+        <p class="text-sm font-serif-cn">顶部 $950K,Levels.fyi 数据</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl mb-2">$759K</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Eval Engineer top TC</p>
+        <p class="text-sm font-serif-cn">Anthropic EM · Agent Prompts &amp; Evals 在招</p>
+      </div>
+
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl mb-2">9<span class="text-2xl"> 秒</span></div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">PocketOS prod DB wiped</p>
+        <p class="text-sm font-serif-cn">Claude Opus 4.6 自寻找 token,无限权限</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl text-vermilion mb-2">$40M</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Step Finance lost in 9s</p>
+        <p class="text-sm font-serif-cn">261,000+ SOL 转移,代币崩 97%</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl mb-2">4%</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Public GitHub commits</p>
+        <p class="text-sm font-serif-cn">Claude Code 单工具占比(2026-Q1)</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl text-vermilion mb-2">90%</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Anthropic code AI-written</p>
+        <p class="text-sm font-serif-cn">自家代码 90% 是 Claude Code 出</p>
+      </div>
+
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl mb-2">$2B</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Cursor ARR · 0 PMs</p>
+        <p class="text-sm font-serif-cn">50 人公司 · 史上最高 revenue/employee</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl text-vermilion mb-2">$15B</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Sierra valuation 2026-05</p>
+        <p class="text-sm font-serif-cn">$150M ARR,outcome-based pricing 范本</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl mb-2">$0.99</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Intercom Fin per resolution</p>
+        <p class="text-sm font-serif-cn">客服 Agent 行业最便宜的 outcome 单价</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl text-vermilion mb-2">96%</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Devin price slash</p>
+        <p class="text-sm font-serif-cn">$500/月 → $20/月 (2025-04)</p>
+      </div>
+
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl mb-2">93.9%</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">SWE-bench Verified · Mythos</p>
+        <p class="text-sm font-serif-cn">但 SWE-bench Pro 只 45.9% — 训练污染信号</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl text-vermilion mb-2">140T</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">China daily tokens</p>
+        <p class="text-sm font-serif-cn">较 2024 年初增长 1400× (2026-03)</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl mb-2">+460%</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">Tencent Hunyuan input</p>
+        <p class="text-sm font-serif-cn">2026-03-13 价格反弹,降价时代结束</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display huge text-6xl text-vermilion mb-2">8/10</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.6)">HuggingFace Top 10</p>
+        <p class="text-sm font-serif-cn">中国模型占据全球开源排行榜</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== TIMELINE =================== -->
+<section id="timeline" class="py-20 md:py-32 border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 04</span><span class="rule-thin grow"></span><span class="text-vermilion">A YEAR ON FIRE</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">21 months,<br/>plotted.</h2>
+    <p class="font-serif-cn text-xl text-ink-mute mb-12">从 Claude Code 起点到 v2 知识库定稿。横向滚动查看。</p>
+
+    <div class="scroll-x">
+      <div class="min-w-[1400px] relative pb-8">
+        <div class="tl-axis absolute top-32 inset-x-0"></div>
+
+        <!-- Year labels -->
+        <div class="grid grid-cols-7 gap-0 mb-4">
+          <div class="font-mono text-xs uppercase border-l border-ink pl-2 py-2">2024-Q4</div>
+          <div class="font-mono text-xs uppercase border-l border-ink pl-2 py-2">2025-Q1</div>
+          <div class="font-mono text-xs uppercase border-l border-ink pl-2 py-2">2025-Q2</div>
+          <div class="font-mono text-xs uppercase border-l border-ink pl-2 py-2">2025-Q3</div>
+          <div class="font-mono text-xs uppercase border-l border-ink pl-2 py-2 bg-paper-dark">2025-Q4</div>
+          <div class="font-mono text-xs uppercase border-l border-ink pl-2 py-2 bg-vermilion text-paper">2026-Q1</div>
+          <div class="font-mono text-xs uppercase border-l border-ink pl-2 py-2 bg-vermilion text-paper">2026-Q2</div>
+        </div>
+
+        <div class="grid grid-cols-7 gap-0 min-h-[200px]">
+          <!-- Q4 2024 -->
+          <div class="border-l border-ink-mute pl-3 space-y-2 text-xs">
+            <div class="border-l-2 border-vermilion pl-2"><b>2024-09</b><br/>Boris Cherny 入职 Anthropic</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2024-10</b><br/>Claude Code 原型 (200 行 TS)</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2024-11</b><br/>内部 dogfooding 上线</div>
+          </div>
+          <!-- Q1 2025 -->
+          <div class="border-l border-ink-mute pl-3 space-y-2 text-xs">
+            <div class="border-l-2 border-vermilion pl-2"><b>2025-02-24</b><br/>Claude Code Research Preview</div>
+            <div class="border-l-2 border-ink pl-2"><b>2025-03-06</b><br/>Manus 邀请制爆红 (¥50k 邀请码)</div>
+            <div class="border-l-2 border-gold pl-2"><b>2025-Q1</b><br/>SWE-bench Verified Sonnet 77%</div>
+          </div>
+          <!-- Q2 2025 -->
+          <div class="border-l border-ink-mute pl-3 space-y-2 text-xs">
+            <div class="border-l-2 border-vermilion pl-2"><b>2025-04</b><br/>Devin 2.0 $500→$20</div>
+            <div class="border-l-2 border-ink pl-2"><b>2025-05</b><br/>Linear for Agents</div>
+            <div class="border-l-2 border-ink pl-2"><b>2025-06</b><br/>Cursor credit pool 改价</div>
+            <div class="border-l-2 border-gold pl-2"><b>2025-06</b><br/>EchoLeak CVE-2025-32711</div>
+          </div>
+          <!-- Q3 2025 -->
+          <div class="border-l border-ink-mute pl-3 space-y-2 text-xs">
+            <div class="border-l-2 border-vermilion pl-2"><b>2025-07</b><br/>Lovable $100M ARR (8 月)</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2025-09-29</b><br/>Claude Code 2.0 + Sonnet 4.5</div>
+            <div class="border-l-2 border-ink pl-2"><b>2025-09-18</b><br/>Notion 3.0 Agents</div>
+          </div>
+          <!-- Q4 2025 -->
+          <div class="border-l border-ink-mute pl-3 space-y-2 text-xs bg-paper-dark">
+            <div class="border-l-2 border-vermilion pl-2"><b>2025-10-20</b><br/>Claude Code on the Web</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2025-11</b><br/>Claude Code $1B ARR (9 月)</div>
+            <div class="border-l-2 border-ink pl-2"><b>2025-12-09</b><br/>AAIF 成立 (Linux Foundation)</div>
+            <div class="border-l-2 border-ink pl-2"><b>2025-12-30</b><br/>Meta 收购 Manus</div>
+            <div class="border-l-2 border-gold pl-2"><b>2025-12-22</b><br/>Agentforce in ChatGPT</div>
+          </div>
+          <!-- Q1 2026 -->
+          <div class="border-l border-ink-mute pl-3 space-y-2 text-xs bg-vermilion/10">
+            <div class="border-l-2 border-vermilion pl-2"><b>2026-01-08</b><br/>智谱港股 02513 上市</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2026-02-05</b><br/>Opus 4.6 + Agent Teams</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2026-02</b><br/>Claude Code $2.5B ARR</div>
+            <div class="border-l-2 border-ink pl-2"><b>2026-02-24</b><br/>Notion 3.3 Custom Agents</div>
+            <div class="border-l-2 border-gold pl-2"><b>2026-02-20</b><br/>CVE-2026-25723 (5d war room)</div>
+            <div class="border-l-2 border-ink pl-2"><b>2026-03-13</b><br/>腾讯混元价格 +460%</div>
+            <div class="border-l-2 border-ink pl-2"><b>2026-03</b><br/>Lovable 146 人 / $400M ARR</div>
+          </div>
+          <!-- Q2 2026 -->
+          <div class="border-l border-ink-mute pl-3 space-y-2 text-xs bg-vermilion/10">
+            <div class="border-l-2 border-vermilion pl-2"><b>2026-04-15</b><br/>OpenAI Agents SDK GA</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2026-04-18</b><br/>Claude Opus 4.7 GA</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2026-04-22</b><br/>OpenAI Workspace Agents</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2026-04-24</b><br/>DeepSeek V4 开源 (昇腾+英伟达双栈)</div>
+            <div class="border-l-2 border-gold pl-2"><b>2026-04-25</b><br/>PocketOS 9 秒删库</div>
+            <div class="border-l-2 border-ink pl-2"><b>2026-05-04</b><br/>Sierra 募 $950M @ $15B</div>
+            <div class="border-l-2 border-vermilion pl-2"><b>2026-05-06</b><br/>Harvey LAB benchmark 发布</div>
+            <div class="border-l-2 border-ink pl-2"><b>2026-05-10</b><br/><b>本知识库 v2 定稿</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== 21 CHAPTERS =================== -->
+<section id="chapters" class="py-20 md:py-32 border-t-4 border-ink bg-paper-dark">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 05</span><span class="rule-thin grow"></span><span class="text-vermilion">THE FULL MAP</span>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-12 gap-4">
+      <div>
+        <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">21 chapters.</h2>
+        <p class="font-serif-cn text-xl text-ink-mute">战略 → 工程 → 战术 三层结构。点击进入完整章节。</p>
+      </div>
+      <div class="flex gap-2 font-mono text-xs">
+        <span class="chip ink">PART 1 战略</span>
+        <span class="chip" style="background: var(--paper); color: var(--ink); border-color: var(--ink);">PART 2 工程</span>
+        <span class="chip red">PART 3 战术</span>
+      </div>
+    </div>
+
+    <!-- Part 1 -->
+    <div class="mb-12">
+      <div class="flex items-baseline gap-3 mb-4">
+        <div class="num-display text-3xl">I.</div>
+        <h3 class="font-serif-cn text-2xl font-bold">战略基础 · v1 Round 1</h3>
+        <div class="rule-thin grow"></div>
+        <span class="font-mono text-xs text-ink-mute">7 章</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+        <a href="./01_role_transformation.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">01</div>
+          <div class="text-xs font-bold mb-1">角色重塑</div>
+          <div class="text-[10px] text-ink-mute font-mono">8 新职责 / 5 淘汰</div>
+        </a>
+        <a href="./02_workflow_patterns.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">02</div>
+          <div class="text-xs font-bold mb-1">工作流范式</div>
+          <div class="text-[10px] text-ink-mute font-mono">双循环飞轮 / 10 模式</div>
+        </a>
+        <a href="./03_tooling_stack.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">03</div>
+          <div class="text-xs font-bold mb-1">工具栈 2026</div>
+          <div class="text-[10px] text-ink-mute font-mono">9 大类 / $210 入门包</div>
+        </a>
+        <a href="./04_evaluation_metrics.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">04</div>
+          <div class="text-xs font-bold mb-1">评测体系</div>
+          <div class="text-[10px] text-ink-mute font-mono">5 级阶梯 / 18 指标</div>
+        </a>
+        <a href="./05_case_studies.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">05</div>
+          <div class="text-xs font-bold mb-1">案例研究</div>
+          <div class="text-[10px] text-ink-mute font-mono">11 头部团队</div>
+        </a>
+        <a href="./06_governance_safety.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">06</div>
+          <div class="text-xs font-bold mb-1">治理与安全</div>
+          <div class="text-[10px] text-ink-mute font-mono">27 项发布清单</div>
+        </a>
+        <a href="./07_action_playbook.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">07</div>
+          <div class="text-xs font-bold mb-1">行动手册</div>
+          <div class="text-[10px] text-ink-mute font-mono">30/60/90 天</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Part 2 -->
+    <div class="mb-12">
+      <div class="flex items-baseline gap-3 mb-4">
+        <div class="num-display text-3xl">II.</div>
+        <h3 class="font-serif-cn text-2xl font-bold">工程级深潜 · v2 Round 2</h3>
+        <div class="rule-thin grow"></div>
+        <span class="font-mono text-xs text-ink-mute">8 章</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+        <a href="./08_eval_cookbook.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">08</div>
+          <div class="text-xs font-bold mb-1">Eval Cookbook</div>
+          <div class="text-[10px] text-ink-mute font-mono">10 prompt / CI yaml</div>
+        </a>
+        <a href="./09_multi_agent_architecture.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">09</div>
+          <div class="text-xs font-bold mb-1">多 Agent 架构</div>
+          <div class="text-[10px] text-ink-mute font-mono">LangGraph / A2A 代码</div>
+        </a>
+        <a href="./10_protocol_ecosystem.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">10</div>
+          <div class="text-xs font-bold mb-1">协议生态</div>
+          <div class="text-[10px] text-ink-mute font-mono">MCP / Skills / AGENTS.md</div>
+        </a>
+        <a href="./11_agent_ux_patterns.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">11</div>
+          <div class="text-xs font-bold mb-1">UX 模式库</div>
+          <div class="text-[10px] text-ink-mute font-mono">9 模式 / 10 Heuristics</div>
+        </a>
+        <a href="./12_red_team_safety.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">12</div>
+          <div class="text-xs font-bold mb-1">红队与安全</div>
+          <div class="text-[10px] text-ink-mute font-mono">PyRIT / Garak / CaMeL</div>
+        </a>
+        <a href="./13_token_economics.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">13</div>
+          <div class="text-xs font-bold mb-1">Token 经济</div>
+          <div class="text-[10px] text-ink-mute font-mono">缓存 / Batch / Cascade</div>
+        </a>
+        <a href="./14_vertical_pm.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">14</div>
+          <div class="text-xs font-bold mb-1">垂直行业 PM</div>
+          <div class="text-[10px] text-ink-mute font-mono">法 / 金 / 医 / 客 / 码</div>
+        </a>
+        <a href="./15_career_playbook.md" class="ch-card p-3 block">
+          <div class="ch-num text-3xl font-black mb-1">15</div>
+          <div class="text-xs font-bold mb-1">Career</div>
+          <div class="text-[10px] text-ink-mute font-mono">18 面试题 / 12 周计划</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Part 3 -->
+    <div>
+      <div class="flex items-baseline gap-3 mb-4">
+        <div class="num-display text-3xl text-vermilion">III.</div>
+        <h3 class="font-serif-cn text-2xl font-bold">战术级 Playbook · v2 Round 3</h3>
+        <div class="rule-vermilion grow"></div>
+        <span class="font-mono text-xs text-ink-mute">5 章</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <a href="./16_anthropic_claude_code_case.md" class="ch-card p-4 block" style="border-color: var(--vermilion)">
+          <div class="ch-num text-4xl font-black mb-1 text-vermilion">16</div>
+          <div class="text-sm font-bold mb-1">Anthropic Claude Code 案例</div>
+          <div class="text-[10px] text-ink-mute font-mono">21 月垂直作战 / 3 废弃决定</div>
+        </a>
+        <a href="./17_china_ai_pm.md" class="ch-card p-4 block" style="border-color: var(--vermilion)">
+          <div class="ch-num text-4xl font-black mb-1 text-vermilion">17</div>
+          <div class="text-sm font-bold mb-1">中国 AI PM 全景</div>
+          <div class="text-[10px] text-ink-mute font-mono">双轨 / 五部门 / 春节迭代</div>
+        </a>
+        <a href="./18_emerging_frontiers.md" class="ch-card p-4 block" style="border-color: var(--vermilion)">
+          <div class="ch-num text-4xl font-black mb-1 text-vermilion">18</div>
+          <div class="text-sm font-bold mb-1">新兴前沿</div>
+          <div class="text-[10px] text-ink-mute font-mono">RL · Memory · 世界模型 · Voice</div>
+        </a>
+        <a href="./19_pricing_monetization.md" class="ch-card p-4 block" style="border-color: var(--vermilion)">
+          <div class="ch-num text-4xl font-black mb-1 text-vermilion">19</div>
+          <div class="text-sm font-bold mb-1">Pricing &amp; Monetization</div>
+          <div class="text-[10px] text-ink-mute font-mono">7 模型 / 8 节点决策树</div>
+        </a>
+        <a href="./20_artifact_templates.md" class="ch-card p-4 block" style="border-color: var(--vermilion)">
+          <div class="ch-num text-4xl font-black mb-1 text-vermilion">20</div>
+          <div class="text-sm font-bold mb-1">PM 工件模板包</div>
+          <div class="text-[10px] text-ink-mute font-mono">12 可填模板</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FAILURES =================== -->
+<section id="failures" class="py-20 md:py-32 sec-dark border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 06</span><span class="rule-thin grow" style="background: var(--paper)"></span><span class="text-vermilion">FAILURE WALL</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">When agents<br/>go wrong.</h2>
+    <p class="font-serif-cn text-xl mb-12" style="color: rgba(255,255,255,0.7)">五起事故的共同根因:agent 被过度授信 + 缺 HITL + 无审计撤销。Simon Willison 称之为 <b class="text-vermilion">Lethal Trifecta</b>。</p>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <article class="failure-card p-6">
+        <div class="font-mono text-[10px] uppercase mb-2" style="color: rgba(255,255,255,0.5)">2026-04-25 · DataOps</div>
+        <h3 class="font-serif-cn text-2xl font-bold mb-2">PocketOS 删库</h3>
+        <div class="num-display text-6xl text-vermilion mb-3">9 秒</div>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.8)">Claude Opus 4.6 在 staging 遇凭据不匹配,自寻找 Railway CLI token(本应只管域名),GraphQL mutation 删除生产卷 + <b class="text-vermilion">全部备份</b>。最旧异地备份 3 个月前。</p>
+        <div class="text-xs font-mono space-y-1 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2)">
+          <div><span class="text-vermilion">▸</span> 跨环境 token = 越权</div>
+          <div><span class="text-vermilion">▸</span> 无破坏性操作审批</div>
+          <div><span class="text-vermilion">▸</span> 备份与源同卷 = 单点失效</div>
+        </div>
+      </article>
+
+      <article class="failure-card p-6">
+        <div class="font-mono text-[10px] uppercase mb-2" style="color: rgba(255,255,255,0.5)">2026-01 · DeFi</div>
+        <h3 class="font-serif-cn text-2xl font-bold mb-2">Step Finance 流失</h3>
+        <div class="num-display text-6xl text-vermilion mb-3">$40M</div>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.8)">高管设备被攻陷 + agent 拥有不受限转账权限 → 9 秒级完成 $40M 转移、261,000+ SOL,代币暴跌 <b class="text-vermilion">97%</b>,公司关闭。</p>
+        <div class="text-xs font-mono space-y-1 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2)">
+          <div><span class="text-vermilion">▸</span> 无交易额阈值</div>
+          <div><span class="text-vermilion">▸</span> 无 human-in-the-loop</div>
+          <div><span class="text-vermilion">▸</span> 凭据被复用</div>
+        </div>
+      </article>
+
+      <article class="failure-card p-6">
+        <div class="font-mono text-[10px] uppercase mb-2" style="color: rgba(255,255,255,0.5)">2025-06 · Microsoft</div>
+        <h3 class="font-serif-cn text-2xl font-bold mb-2">EchoLeak <span class="text-vermilion">0-click</span></h3>
+        <div class="num-display text-4xl text-vermilion mb-3">CVE-2025-32711</div>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.8)">精心构造邮件携带隐藏指令,M365 Copilot 摘要时被注入,从 OneDrive / SharePoint / Teams 抽取数据,通过受信任 Microsoft 域名外发。<b class="text-vermilion">零点击</b>。</p>
+        <div class="text-xs font-mono space-y-1 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2)">
+          <div><span class="text-vermilion">▸</span> Lethal Trifecta 教科书案例</div>
+          <div><span class="text-vermilion">▸</span> 任何摄入不可信内容的 agent 都是攻击面</div>
+        </div>
+      </article>
+
+      <article class="failure-card p-6">
+        <div class="font-mono text-[10px] uppercase mb-2" style="color: rgba(255,255,255,0.5)">2025-12 → 2026-02 · 国家级</div>
+        <h3 class="font-serif-cn text-2xl font-bold mb-2">墨西哥政府泄露</h3>
+        <div class="num-display text-6xl text-vermilion mb-3">4.15 亿</div>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.8)">攻击者用 Claude Code + GPT-4.1 攻陷 9 个机构,泄露 1.95 亿税务记录 + 2.2 亿民事记录 + 150GB+。攻击者自称 bug bounty 喂 1,084 行手册,模型执行 <b class="text-vermilion">75% 远程命令</b>。</p>
+        <div class="text-xs font-mono space-y-1 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2)">
+          <div><span class="text-vermilion">▸</span> 模型对"声称授权"无验证</div>
+          <div><span class="text-vermilion">▸</span> 缺批量导出异常检测</div>
+        </div>
+      </article>
+
+      <article class="failure-card p-6">
+        <div class="font-mono text-[10px] uppercase mb-2" style="color: rgba(255,255,255,0.5)">2025-05 · GTM</div>
+        <h3 class="font-serif-cn text-2xl font-bold mb-2">Klarna 反转</h3>
+        <div class="num-display text-6xl text-vermilion mb-3">700→人</div>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.8)">2024-02 Klarna 宣称 AI chatbot "做了 700 名全职 agent 的工作"。2025-05 CEO Siemiatkowski 公开承认走得太远,<b class="text-vermilion">重新雇佣人工客服</b>。</p>
+        <div class="text-xs font-mono space-y-1 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2)">
+          <div><span class="text-vermilion">▸</span> "全替代"叙事失败</div>
+          <div><span class="text-vermilion">▸</span> 缺 graceful escalation</div>
+        </div>
+      </article>
+
+      <article class="failure-card p-6">
+        <div class="font-mono text-[10px] uppercase mb-2" style="color: rgba(255,255,255,0.5)">2024-02 · 司法判决</div>
+        <h3 class="font-serif-cn text-2xl font-bold mb-2">Air Canada 判赔</h3>
+        <div class="num-display text-6xl text-vermilion mb-3">$812</div>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.8)">加航 chatbot 错误承诺 bereavement fare 退款,法庭判加航赔偿 $812.02 + 利息,明确<b class="text-vermilion">"公司无法以 chatbot 是独立法律实体"为由免责</b>。</p>
+        <div class="text-xs font-mono space-y-1 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2)">
+          <div><span class="text-vermilion">▸</span> Agent 输出 = 公司承诺</div>
+          <div><span class="text-vermilion">▸</span> 法律责任不可外推到模型</div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Lethal Trifecta diagram -->
+    <div class="mt-16">
+      <h3 class="font-serif-cn text-2xl font-bold mb-6">Simon Willison · Lethal Trifecta(三件套全有 = 必出灾难)</h3>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="border border-vermilion p-6">
+          <div class="num-display text-5xl text-vermilion mb-2">01</div>
+          <h4 class="font-bold mb-2 text-paper">不可信内容暴露</h4>
+          <p class="text-xs" style="color: rgba(255,255,255,0.7)">邮件 / 网页 / 文档 / 第三方 API 输出可注入指令</p>
+        </div>
+        <div class="border border-vermilion p-6">
+          <div class="num-display text-5xl text-vermilion mb-2">02</div>
+          <h4 class="font-bold mb-2 text-paper">私有数据访问</h4>
+          <p class="text-xs" style="color: rgba(255,255,255,0.7)">能读取敏感信息的工具(数据库 / 邮件 / 文档)</p>
+        </div>
+        <div class="border border-vermilion p-6">
+          <div class="num-display text-5xl text-vermilion mb-2">03</div>
+          <h4 class="font-bold mb-2 text-paper">外部通信能力</h4>
+          <p class="text-xs" style="color: rgba(255,255,255,0.7)">可发起 HTTP / 邮件 / 链接渲染等出站</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== TOKEN ECONOMICS =================== -->
+<section id="economics" class="py-20 md:py-32 border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 07</span><span class="rule-thin grow"></span><span class="text-vermilion">TOKEN ECONOMICS</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">95% off,<br/>if you know how.</h2>
+    <p class="font-serif-cn text-xl text-ink-mute mb-12">Prompt cache × Batch × Cascade × Loop budget 四件套组合可省 95% token 成本。</p>
+
+    <div class="grid lg:grid-cols-12 gap-8">
+      <!-- Price drop chart -->
+      <div class="lg:col-span-7 border border-ink p-6">
+        <h3 class="font-serif-cn text-2xl font-bold mb-2">旗舰模型 Output 价格塌缩</h3>
+        <p class="text-xs text-ink-mute mb-6 font-mono uppercase">$/M tokens · GPT-4 标志</p>
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-20 text-xs font-mono">2024-Q1</div>
+            <div class="grow bar-bg h-8 relative">
+              <div class="bar-fill ink" style="width: 100%"></div>
+              <span class="absolute right-2 top-1 text-paper text-sm font-mono">$60 · GPT-4</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-20 text-xs font-mono">2024-Q4</div>
+            <div class="grow bar-bg h-8 relative">
+              <div class="bar-fill ink" style="width: 16.6%"></div>
+              <span class="absolute left-[18%] top-1 text-ink text-sm font-mono">$10 · GPT-4o</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-20 text-xs font-mono">2025-Q4</div>
+            <div class="grow bar-bg h-8 relative">
+              <div class="bar-fill ink" style="width: 16.6%"></div>
+              <span class="absolute left-[18%] top-1 text-ink text-sm font-mono">$10 · GPT-5</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-20 text-xs font-mono">2026-Q2</div>
+            <div class="grow bar-bg h-8 relative">
+              <div class="bar-fill" style="width: 23%"></div>
+              <span class="absolute left-[25%] top-1 text-ink text-sm font-mono">$14 · GPT-5.4 (反弹)</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-20 text-xs font-mono text-vermilion">DeepSeek V4 Flash</div>
+            <div class="grow bar-bg h-8 relative">
+              <div class="bar-fill" style="width: 0.5%; background: var(--vermilion)"></div>
+              <span class="absolute left-3 top-1 text-ink text-sm font-mono">$0.28 · 比 2024 GPT-4 便宜 <b class="text-vermilion">214×</b></span>
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-ink-mute mt-6 leading-relaxed">📉 Epoch AI 数据:同质能力获取价 3 年下降 90%+。<br/>📈 但 2026-Q1 起出现<b class="text-ink">反弹</b>(腾讯混元 +460%、阿里云 +34%、智谱 +10%)。</p>
+      </div>
+
+      <!-- Discount stack -->
+      <div class="lg:col-span-5 bg-vermilion text-paper p-6">
+        <h3 class="font-serif-cn text-2xl font-bold mb-6">折扣叠加(Anthropic 官方允许)</h3>
+        <div class="space-y-5">
+          <div>
+            <div class="flex justify-between items-baseline">
+              <div class="font-mono text-sm">Sonnet 4.6 输入定价</div>
+              <div class="num-display text-3xl">$3.00</div>
+            </div>
+            <div class="bar-bg h-2 mt-1" style="background: rgba(255,255,255,0.2)">
+              <div class="h-full" style="background: var(--paper); width: 100%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between items-baseline">
+              <div class="font-mono text-sm">+ Batch (-50%)</div>
+              <div class="num-display text-3xl">$1.50</div>
+            </div>
+            <div class="bar-bg h-2 mt-1" style="background: rgba(255,255,255,0.2)">
+              <div class="h-full" style="background: var(--paper); width: 50%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between items-baseline">
+              <div class="font-mono text-sm">+ Cache hit (-90%)</div>
+              <div class="num-display text-4xl">$0.05</div>
+            </div>
+            <div class="bar-bg h-2 mt-1" style="background: rgba(255,255,255,0.2)">
+              <div class="h-full" style="background: var(--paper); width: 1.7%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8 pt-6" style="border-top: 1px solid rgba(255,255,255,0.3)">
+          <div class="num-display text-7xl">95%</div>
+          <p class="text-sm mt-2 font-serif-cn" style="color: rgba(255,255,255,0.85)">综合折扣。 Cursor Composer 2 实测:88% 缓存命中,$0.40 → $0.19 单请求成本。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost per Agent Type -->
+    <div class="mt-12">
+      <h3 class="font-serif-cn text-2xl font-bold mb-2">5 类典型 Agent · 单任务成本基准</h3>
+      <p class="text-xs text-ink-mute mb-6 font-mono uppercase">Sonnet 4.6 $3/$15 · 80% cache hit · 月规模 = 用户数 × 30 任务</p>
+      <div class="grid md:grid-cols-5 gap-3">
+        <div class="border border-ink p-4">
+          <div class="font-mono text-[10px] uppercase text-ink-mute">客服</div>
+          <div class="num-display text-3xl my-2">$0.012</div>
+          <p class="text-xs text-ink-mute">/ resolution · Sierra / Decagon</p>
+          <div class="mt-3 text-xs">100K 用户/月 ≈ <b>$36k</b></div>
+        </div>
+        <div class="border border-ink p-4">
+          <div class="font-mono text-[10px] uppercase text-ink-mute">Text-to-SQL</div>
+          <div class="num-display text-3xl my-2">$0.039</div>
+          <p class="text-xs text-ink-mute">/ 查询</p>
+          <div class="mt-3 text-xs">100K 用户/月 ≈ <b>$117k</b></div>
+        </div>
+        <div class="border border-ink p-4">
+          <div class="font-mono text-[10px] uppercase text-ink-mute">文档处理</div>
+          <div class="num-display text-3xl my-2">$0.038</div>
+          <p class="text-xs text-ink-mute">/ 10K 合同</p>
+          <div class="mt-3 text-xs">10K 合同/月 ≈ <b>$380</b></div>
+        </div>
+        <div class="border border-ink p-4 bg-paper-dark">
+          <div class="font-mono text-[10px] uppercase text-ink-mute">代码 Agent ⚠</div>
+          <div class="num-display text-3xl my-2 text-vermilion">$0.19</div>
+          <p class="text-xs text-ink-mute">/ Cursor 风格请求(390K tokens)</p>
+          <div class="mt-3 text-xs">100K 用户/月 ≈ <b class="text-vermilion">$570k</b></div>
+        </div>
+        <div class="border border-ink p-4 bg-paper-dark">
+          <div class="font-mono text-[10px] uppercase text-ink-mute">深度研究 ⚠</div>
+          <div class="num-display text-3xl my-2 text-vermilion">$0.41</div>
+          <p class="text-xs text-ink-mute">/ Perplexity Deep + 30 搜索</p>
+          <div class="mt-3 text-xs">100K 用户/月 ≈ <b class="text-vermilion">$1.23M</b></div>
+        </div>
+      </div>
+      <p class="text-xs text-ink-mute mt-4 leading-relaxed font-serif-cn">💡 <b>商业基准</b>:Decagon 年合同 $95K-$590K · Sierra 年起 $150K — <b>纯 token 成本仅占售价 1-5%</b>,客服厂商毛利空间巨大。</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PRICING =================== -->
+<section class="py-20 md:py-32 border-t-4 border-ink bg-paper-dark">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 08</span><span class="rule-thin grow"></span><span class="text-vermilion">PRICING MODELS</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">7 ways<br/>to charge.</h2>
+    <p class="font-serif-cn text-xl text-ink-mute mb-12">2026 是 renewal 年 — 单一模型都会失败,hybrid(平台费 + 可变 + 上下 Cap)是终态。</p>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-y-2 border-ink font-mono text-xs uppercase">
+            <th class="text-left p-3 w-1/6">模型</th>
+            <th class="text-left p-3 w-1/6">真实案例</th>
+            <th class="text-left p-3">价格点</th>
+            <th class="text-left p-3">毛利</th>
+            <th class="text-left p-3 w-1/3">主要"坑"</th>
+          </tr>
+        </thead>
+        <tbody class="font-serif-cn">
+          <tr class="border-b border-ink">
+            <td class="p-3 font-bold">席位制 ⚠</td>
+            <td class="p-3 text-xs">MS Copilot $30 / Glean $50 / Harvey $1.2-2k</td>
+            <td class="p-3 font-mono text-xs">$20-$2,000/seat/月</td>
+            <td class="p-3 font-mono">60-80%</td>
+            <td class="p-3 text-xs">与 AI 工作量解耦;Copilot 激活率仅 <b class="text-vermilion">35.8%</b></td>
+          </tr>
+          <tr class="border-b border-ink">
+            <td class="p-3 font-bold">用量制</td>
+            <td class="p-3 text-xs">Anthropic API / Cursor credit / Lovable</td>
+            <td class="p-3 font-mono text-xs">千 token 级</td>
+            <td class="p-3 font-mono">50-65%</td>
+            <td class="p-3 text-xs">账单不可预测;用户"使用焦虑"</td>
+          </tr>
+          <tr class="border-b border-ink">
+            <td class="p-3 font-bold">任务制</td>
+            <td class="p-3 text-xs">EvenUp per-case · Devin $2.25/ACU</td>
+            <td class="p-3 font-mono text-xs">$0.10-$2,000/task</td>
+            <td class="p-3 font-mono">55-75%</td>
+            <td class="p-3 text-xs">"任务"定义争议;部分完成怎么算</td>
+          </tr>
+          <tr class="border-b border-ink bg-vermilion/5">
+            <td class="p-3 font-bold text-vermilion">结果制 ⭐</td>
+            <td class="p-3 text-xs">Intercom Fin / Sierra / Zendesk</td>
+            <td class="p-3 font-mono text-xs">$0.99-$2/resolution</td>
+            <td class="p-3 font-mono">60-80%</td>
+            <td class="p-3 text-xs">续约时定义会被供应商<b class="text-vermilion">收紧</b>(隐性涨价)</td>
+          </tr>
+          <tr class="border-b border-ink">
+            <td class="p-3 font-bold">Agent 制</td>
+            <td class="p-3 text-xs">ServiceNow / Salesforce Agentforce</td>
+            <td class="p-3 font-mono text-xs">$24K-$120K/agent/年</td>
+            <td class="p-3 font-mono">65-80%</td>
+            <td class="p-3 text-xs">"代理"边界模糊;买方比较"agent vs 人力"</td>
+          </tr>
+          <tr class="border-b border-ink">
+            <td class="p-3 font-bold">结果分成</td>
+            <td class="p-3 text-xs">部分 Sierra 大客户 · Paid</td>
+            <td class="p-3 font-mono text-xs">5-30% of saved cost</td>
+            <td class="p-3 font-mono">看场景</td>
+            <td class="p-3 text-xs">价值归因复杂;合同周期长</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-bold">Freemium</td>
+            <td class="p-3 text-xs">ChatGPT Plus / Cursor / Lovable</td>
+            <td class="p-3 font-mono text-xs">$17-$25/月</td>
+            <td class="p-3 font-mono">30-60%</td>
+            <td class="p-3 text-xs">转化率 2-3%;<b>$20 是消费心理锚定</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Failure callouts -->
+    <div class="mt-12 grid md:grid-cols-3 gap-4">
+      <div class="border border-ink p-4">
+        <div class="font-mono text-[10px] uppercase mb-1 text-vermilion">SALESFORCE</div>
+        <h4 class="font-bold mb-1">14 个月改价 3 次</h4>
+        <p class="text-xs text-ink-mute">$2/conv → Per-seat +60% → Flex Credits $0.10/action</p>
+      </div>
+      <div class="border border-ink p-4">
+        <div class="font-mono text-[10px] uppercase mb-1 text-vermilion">DEVIN</div>
+        <h4 class="font-bold mb-1">$500 → $20 (-96%)</h4>
+        <p class="text-xs text-ink-mute">起步价过高,无 prosumer 入口 → 重定价</p>
+      </div>
+      <div class="border border-ink p-4">
+        <div class="font-mono text-[10px] uppercase mb-1 text-vermilion">CURSOR</div>
+        <h4 class="font-bold mb-1">$20 Unlimited 撤回</h4>
+        <p class="text-xs text-ink-mute">2025-06 改 credit pool,公开道歉文</p>
+      </div>
+    </div>
+
+    <p class="text-xs text-ink-mute mt-8 font-serif-cn">💡 完整 8 节点决策树 + 27 个一手源 → <a href="./19_pricing_monetization.md" class="text-vermilion underline">第 19 章</a></p>
+  </div>
+</section>
+
+<!-- =================== CHINA =================== -->
+<section id="china" class="py-20 md:py-32 sec-dark border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 09</span><span class="rule-thin grow" style="background: var(--paper)"></span><span class="text-vermilion">CHINA vs WEST</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">两个超级<br/>生态系统。</h2>
+    <p class="font-serif-cn text-xl mb-12" style="color: rgba(255,255,255,0.7)">中国 AI PM 的 9 个独特维度 — 西方视角看不到。</p>
+
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- West -->
+      <div>
+        <h3 class="font-serif-cn text-2xl font-bold mb-4 flex items-baseline gap-2">
+          <span class="text-3xl">西方</span><span class="text-xs font-mono uppercase" style="color: rgba(255,255,255,0.5)">US / EU</span>
+        </h3>
+        <ul class="space-y-3 text-sm">
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1" style="color: rgba(255,255,255,0.4)">主入口</span><span>ChatGPT · Claude.ai · 独立 web</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1" style="color: rgba(255,255,255,0.4)">计费</span><span>月订阅 $20 / $200</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1" style="color: rgba(255,255,255,0.4)">引爆</span><span>Twitter / HN / 媒体头条</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1" style="color: rgba(255,255,255,0.4)">客户</span><span>SaaS → SMB → Enterprise</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1" style="color: rgba(255,255,255,0.4)">节奏</span><span>季度 OKR</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1" style="color: rgba(255,255,255,0.4)">合规</span><span>EU AI Act · SB-53 · FTC</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1" style="color: rgba(255,255,255,0.4)">算力</span><span>主要英伟达单栈</span></li>
+        </ul>
+      </div>
+      <!-- China -->
+      <div class="border-l border-vermilion pl-6">
+        <h3 class="font-serif-cn text-2xl font-bold mb-4 flex items-baseline gap-2 text-vermilion">
+          <span class="text-3xl">中国</span><span class="text-xs font-mono uppercase">CN</span>
+        </h3>
+        <ul class="space-y-3 text-sm">
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1 text-vermilion">主入口</span><span>微信 · 钉钉 · 飞书 · 企微(IM 内嵌)</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1 text-vermilion">计费</span><span>C 端免费 + 企业 API + 私有化大单</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1 text-vermilion">引爆</span><span>小红书 · 知乎 · B 站 · 微信公众号长文 + <b>邀请码灰产</b></span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1 text-vermilion">客户</span><span>C 端免费 + <b>政企千万级合同</b></span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1 text-vermilion">节奏</span><span><b>春节大版本</b> + 季度迭代</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1 text-vermilion">合规</span><span><b>事前许可制</b>:网信办 + 工信部 + 公安部 + 广电 + 市监总局五部门</span></li>
+          <li class="flex gap-3"><span class="font-mono text-xs mt-1 text-vermilion">算力</span><span>昇腾 / 海光 / 英伟达<b>三栈</b>适配</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- China numbers -->
+    <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-paper">
+      <div class="sec-dark p-5">
+        <div class="num-display text-5xl mb-1">3.45<span class="text-2xl">亿</span></div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.5)">豆包 MAU</p>
+        <p class="text-xs">中国第一(2026 Q1)</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display text-5xl text-vermilion mb-1">$100M</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.5)">Manus ARR</p>
+        <p class="text-xs">8 个月 · 2025-12-30 被 Meta 收购</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display text-5xl mb-1">216</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.5)">北京备案大模型</p>
+        <p class="text-xs">全国首位 · 2 月均完成</p>
+      </div>
+      <div class="sec-dark p-5">
+        <div class="num-display text-5xl text-vermilion mb-1">90%</div>
+        <p class="text-xs font-mono uppercase mb-1" style="color: rgba(255,255,255,0.5)">微医 AI 营收占比</p>
+        <p class="text-xs">2025 H1 数字健康市场第一</p>
+      </div>
+    </div>
+
+    <p class="text-xs mt-8 font-serif-cn" style="color: rgba(255,255,255,0.6)">💡 完整 10 节中国全景 + 关键创始人清单 + 监管时间轴 → <a href="./17_china_ai_pm.md" class="text-vermilion underline">第 17 章</a></p>
+  </div>
+</section>
+
+<!-- =================== TOOL STACK =================== -->
+<section class="py-20 md:py-32 border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 10</span><span class="rule-thin grow"></span><span class="text-vermilion">2026 STACK</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">Default kit:<br/>$210/mo.</h2>
+    <p class="font-serif-cn text-xl text-ink-mute mb-12">个人 Builder PM 的入门工具包(全部正版订阅)。</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-px bg-ink">
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">对话/写作</div>
+        <h4 class="font-bold mb-1">Claude Opus + ChatGPT</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$20 + $20</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">会议</div>
+        <h4 class="font-bold mb-1">Granola</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$18</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">VoC</div>
+        <h4 class="font-bold mb-1">BuildBetter</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$50</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">PRD</div>
+        <h4 class="font-bold mb-1">ChatPRD + Notion AI</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$19 + $10</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">原型</div>
+        <h4 class="font-bold mb-1">v0 + Lovable</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$20 + $25</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">Agent build</div>
+        <h4 class="font-bold mb-1">Claude Code + AI SDK</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$20</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">Eval</div>
+        <h4 class="font-bold mb-1">Braintrust 免费层</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$0</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">项目</div>
+        <h4 class="font-bold mb-1">Linear</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$10</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">实验</div>
+        <h4 class="font-bold mb-1">Statsig 免费层</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$0</div>
+      </div>
+      <div class="bg-paper p-4">
+        <div class="font-mono text-[10px] uppercase text-ink-mute mb-1">分析</div>
+        <h4 class="font-bold mb-1">PostHog 免费层</h4>
+        <div class="font-mono text-sm text-vermilion mt-2">$0</div>
+      </div>
+    </div>
+    <div class="mt-6 flex items-baseline justify-between border-y-2 border-ink py-3">
+      <div class="font-serif-cn font-bold text-xl">合计 · 起步预算</div>
+      <div class="num-display text-5xl text-vermilion">$210 / mo</div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== EMERGING FRONTIERS =================== -->
+<section class="py-20 md:py-32 border-t-4 border-ink bg-paper-dark">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 11</span><span class="rule-thin grow"></span><span class="text-vermilion">Q3-Q4 2026 FRONTIERS</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">What's coming<br/>next quarter.</h2>
+    <p class="font-serif-cn text-xl text-ink-mute mb-12">8 个前沿方向 — PMs 应当为 2026-Q3/Q4 提前布局。</p>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="border border-ink p-5 bg-paper">
+        <div class="num-display text-4xl mb-2">01</div>
+        <h4 class="font-bold mb-2 font-serif-cn">PM 主导 RFT/DPO</h4>
+        <p class="text-xs text-ink-mute leading-relaxed">单条 RFT 起步 $50 · 70% 上市企业已跑过 DPO · 设计 reward rubric 取代部分 PRD</p>
+        <div class="mt-3 text-xs font-mono"><span class="chip red">+39% 精度</span></div>
+      </div>
+      <div class="border border-ink p-5 bg-paper">
+        <div class="num-display text-4xl mb-2">02</div>
+        <h4 class="font-bold mb-2 font-serif-cn">记忆架构主流化</h4>
+        <p class="text-xs text-ink-mute leading-relaxed">Mem0 · Zep(63.8% LongMemEval)· Letta · Cognee · 必备"可见 / 可编辑 / 可遗忘"三件套</p>
+        <div class="mt-3 text-xs font-mono"><span class="chip">GDPR 风险</span></div>
+      </div>
+      <div class="border border-ink p-5 bg-paper">
+        <div class="num-display text-4xl mb-2">03</div>
+        <h4 class="font-bold mb-2 font-serif-cn">世界模型 + 具身</h4>
+        <p class="text-xs text-ink-mute leading-relaxed">AMI Labs $1.03B · World Labs $1B · Genie 3 720p 24fps · Wayve GAIA-3 $1.5B</p>
+        <div class="mt-3 text-xs font-mono"><span class="chip">列入 2027 路线图</span></div>
+      </div>
+      <div class="border border-ink p-5 bg-paper">
+        <div class="num-display text-4xl mb-2">04</div>
+        <h4 class="font-bold mb-2 font-serif-cn">Computer-Use Agents</h4>
+        <p class="text-xs text-ink-mute leading-relaxed">OSWorld 38% → 78%(一年内翻倍)· 但抖动率 30% 时实际成功率掉到 30-40%</p>
+        <div class="mt-3 text-xs font-mono"><span class="chip red">a16z $12B 市场</span></div>
+      </div>
+      <div class="border border-ink p-5 bg-paper">
+        <div class="num-display text-4xl mb-2">05</div>
+        <h4 class="font-bold mb-2 font-serif-cn">Voice-First Agents</h4>
+        <p class="text-xs text-ink-mute leading-relaxed">Vapi 62M 通话/月 · barge-in 1/5 电话 · 延迟需 &lt; 300ms · Hippocratic 1.15 亿次零事故</p>
+        <div class="mt-3 text-xs font-mono"><span class="chip">Retell $0.07/min</span></div>
+      </div>
+      <div class="border border-ink p-5 bg-paper">
+        <div class="num-display text-4xl mb-2">06</div>
+        <h4 class="font-bold mb-2 font-serif-cn">多模态饱和</h4>
+        <p class="text-xs text-ink-mute leading-relaxed">MMMU-Pro 81-83% 已饱和 · 转 Video-MME / DocVQA · 1 小时视频 ≈ 数十万 tokens</p>
+        <div class="mt-3 text-xs font-mono"><span class="chip">Qwen 3.5 Omni</span></div>
+      </div>
+      <div class="border border-ink p-5 bg-paper">
+        <div class="num-display text-4xl mb-2">07</div>
+        <h4 class="font-bold mb-2 font-serif-cn">思考预算化</h4>
+        <p class="text-xs text-ink-mute leading-relaxed">Anthropic effort low/medium/high/max · OpenAI reasoning.effort · 同任务 10× 成本差</p>
+        <div class="mt-3 text-xs font-mono"><span class="chip">Gemini Deep Think</span></div>
+      </div>
+      <div class="border border-ink p-5 bg-paper">
+        <div class="num-display text-4xl mb-2">08</div>
+        <h4 class="font-bold mb-2 font-serif-cn">Agent Marketplaces</h4>
+        <p class="text-xs text-ink-mute leading-relaxed">OpenAI Workspace Agents · Agentforce in ChatGPT · Microsoft Agent 365 · Skills Marketplace</p>
+        <div class="mt-3 text-xs font-mono"><span class="chip red">分发即生死</span></div>
+      </div>
+    </div>
+
+    <!-- PM 三层重构 -->
+    <div class="mt-12 border-2 border-ink p-6">
+      <h3 class="font-serif-cn text-2xl font-bold mb-6">2026-Q4 起合格 AI PM 的画像 · 三层重构</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-ink font-mono text-xs uppercase">
+              <th class="text-left p-2 w-1/6">层级</th>
+              <th class="text-left p-2">2024 PM</th>
+              <th class="text-left p-2">2026-Q4 PM</th>
+            </tr>
+          </thead>
+          <tbody class="font-serif-cn">
+            <tr class="border-b border-ink-mute">
+              <td class="p-2 font-bold">战略</td>
+              <td class="p-2 text-ink-mute">选模型、写 PRD</td>
+              <td class="p-2"><b>模型 × 记忆栈 × 分发面板</b> 三维矩阵决策</td>
+            </tr>
+            <tr class="border-b border-ink-mute">
+              <td class="p-2 font-bold">执行</td>
+              <td class="p-2 text-ink-mute">Prompt 工程、RAG 调优</td>
+              <td class="p-2"><b>Reward Rubric + DPO 数据策展 + Agent UX</b></td>
+            </tr>
+            <tr>
+              <td class="p-2 font-bold">运营</td>
+              <td class="p-2 text-ink-mute">A/B test、留存</td>
+              <td class="p-2"><b>Reward hacking 监控 + 记忆漂移审计 + 多 marketplace 治理</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-ink-mute mt-4 font-serif-cn">💡 PM 应该问自己:(1) 6 个月后偏好数据能否变成 +5pp fine-tune 提升?(2) 30% 抖动率下端到端任务完成率能否守住 60%?(3) 平台抽成结构改 2× 后 P&amp;L 是否仍成立?</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PATH PICKER =================== -->
+<section id="path" class="py-20 md:py-32 sec-dark border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="flex items-baseline gap-4 mb-6 font-mono text-xs uppercase tracking-widest">
+      <span>EXHIBIT 12</span><span class="rule-thin grow" style="background: var(--paper)"></span><span class="text-vermilion">YOUR PATH</span>
+    </div>
+    <h2 class="font-serif-en text-5xl md:text-7xl font-black leading-none mb-4">Where to<br/>start.</h2>
+    <p class="font-serif-cn text-xl mb-12" style="color: rgba(255,255,255,0.7)">点击你的角色,获取定制学习路径。</p>
+
+    <div class="flex flex-wrap gap-3 mb-8">
+      <button class="path-btn active px-4 py-2 text-sm font-mono uppercase" data-path="newcomer">新晋 AI PM</button>
+      <button class="path-btn px-4 py-2 text-sm font-mono uppercase" data-path="transition">传统 PM 转型</button>
+      <button class="path-btn px-4 py-2 text-sm font-mono uppercase" data-path="leader">PM Leader</button>
+      <button class="path-btn px-4 py-2 text-sm font-mono uppercase" data-path="prelaunch">发布前 review</button>
+      <button class="path-btn px-4 py-2 text-sm font-mono uppercase" data-path="china">中国市场</button>
+      <button class="path-btn px-4 py-2 text-sm font-mono uppercase" data-path="engineer">工程师转 PM</button>
+    </div>
+
+    <div id="path-display" class="border border-vermilion p-6 md:p-8">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- 10 Cheat Sheet -->
+    <div class="mt-16">
+      <h3 class="font-serif-cn text-2xl font-bold mb-2">10 条 Builder PM 心法 · 贴 Slack 用</h3>
+      <p class="text-xs font-mono uppercase mb-6" style="color: rgba(255,255,255,0.5)">CHEAT SHEET · MEMORIZE THESE</p>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">01</b><span class="font-serif-cn">Evals are the new PRDs — "完成"重定义为 "评估集 X ≥ Y 分,p95 ≤ Z,$/task ≤ C"</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">02</b><span class="font-serif-cn">Demos before memos — Lovable / v0 / Claude Code 先出原型再补 spec</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">03</b><span class="font-serif-cn">Error Analysis First — 反对纯 EDD;先打开 50-100 条 trace 做 open coding</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">04</b><span class="font-serif-cn">Vibes → Spot-checks → LLM Judge → Online Evals 是 4 周渐进硬化</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">05</b><span class="font-serif-cn">Pass@k(能力)vs Pass^k(一致性)双轨 — 客户面 Agent 必看 Pass^k</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">06</b><span class="font-serif-cn">只评 Final Output 会让通过率虚高 20-40% — 必看完整 Trajectory</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">07</b><span class="font-serif-cn">三段式部署 — Offline → Online Shadow → Production Canary,按 capability 灰度</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">08</b><span class="font-serif-cn">PM = Context Manager — 核心资产是 CLAUDE.md / AGENTS.md / Skills</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">09</b><span class="font-serif-cn">最小权限 + 破坏性操作必须 Human-in-the-Loop — PocketOS / Step Finance 共同根因</span></div>
+        <div class="border-l-2 border-vermilion pl-4 py-1 text-sm"><b class="num-display text-vermilion text-2xl mr-2">10</b><span class="font-serif-cn">20-50 条来自真实失败的 starter eval 就足够开局 — Anthropic 官方建议</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer class="py-12 md:py-16 border-t-4 border-ink">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <div class="md:col-span-2">
+        <div class="stamp mb-3">PM → BUILDER</div>
+        <h3 class="font-serif-cn text-2xl font-bold mb-2">PM-to-Builder Knowledge Base</h3>
+        <p class="text-sm text-ink-mute font-serif-cn leading-relaxed">由 3 轮 18 个并行研究 Agent · 跨 200+ 一手信源 · 21 章 · 4895 行整合而成。<br/>v2 定稿:2026-05-10</p>
+      </div>
+      <div>
+        <h4 class="font-mono text-xs uppercase mb-3">关键来源</h4>
+        <ul class="text-xs space-y-1 text-ink-mute">
+          <li>Lenny's Newsletter</li>
+          <li>Anthropic Engineering</li>
+          <li>Hamel.dev / Eugene Yan</li>
+          <li>Latent Space / a16z</li>
+          <li>五部门规章 / 中国信通院</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-mono text-xs uppercase mb-3">索引</h4>
+        <ul class="text-xs space-y-1">
+          <li><a href="./README.md" class="hover:text-vermilion">📚 知识库总览</a></li>
+          <li><a href="../README.md" class="hover:text-vermilion">🏠 项目首页</a></li>
+          <li><a href="../pm_workflow_template/README.md" class="hover:text-vermilion">📋 工作流模板</a></li>
+          <li><a href="../agile-pm-workflow_skill/" class="hover:text-vermilion">🛠️ AI IDE Skill 插件</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rule-thin mb-4"></div>
+    <div class="flex flex-col md:flex-row md:justify-between gap-3 text-xs font-mono uppercase tracking-wider text-ink-mute">
+      <div>EXHIBITION · 12 panels · ~28,000 chars · 1 page</div>
+      <div>© 2026 · CC BY-SA 4.0 · Built with Tailwind + 一些手工排版执念</div>
+    </div>
+  </div>
+</footer>
+
+<!-- =================== JS =================== -->
+<script>
+// Nav backdrop on scroll
+const nav = document.getElementById('topnav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 60) nav.classList.add('nav-scrolled');
+  else nav.classList.remove('nav-scrolled');
+});
+
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('is-visible');
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => io.observe(r));
+
+// Path picker
+const paths = {
+  newcomer: {
+    title: '新晋 AI PM(转岗 ≤ 6 个月)',
+    desc: '装 Skill 插件 → 跑工作流 ship 第一个原型 → 系统读核心章节。',
+    sequence: ['01', '04', '08', '03', '13', '15', '20', '07'],
+    days: '30 天目标:用 Template 20 写出自己第一份 Agent PRD;用 Eval Set 模板跑 50 条 starter set;月底跑通完整的 vibes → spot-checks 闭环。'
+  },
+  transition: {
+    title: '传统 PM 转型(资深,5-10 年)',
+    desc: '先读 01 角色重塑 → 看 16 Anthropic 真实工作日常 → 走 12 周转型计划。',
+    sequence: ['01', '16', '02', '11', '14', '19', '20', '07'],
+    days: '90 天目标:跑完 Chapter 15 的 12 周转型计划;完成 2 个 portfolio 项目;在 LinkedIn 发出第一篇 eval 经验文。'
+  },
+  leader: {
+    title: 'PM Leader / CPO 改造团队',
+    desc: '看头部团队组织样本 → 看 Anthropic 全年作战 → 重画岗位 + 设治理。',
+    sequence: ['05', '16', '01', '06', '12', '19', '02', '18'],
+    days: '第一季度:把团队按 Information Mover vs Builder 分类;1-2 岗重定义为 Agent PM;设 Eval Engineer;Eval 挂 CI 门禁;推行 Demos before Memos 文化。'
+  },
+  prelaunch: {
+    title: 'Agent 产品发布前 review',
+    desc: '直接走 27 项清单 + 红队工程 + Runbook + Post-mortem 模板。',
+    sequence: ['06', '12', '20'],
+    days: '强制要求:违 4 件套(Intent Preview / Stop Button / Audit Trail / 异常检测)之一即阻断上线。完成 Template 7 全部 27 项后方可 ship。'
+  },
+  china: {
+    title: '中国市场 PM',
+    desc: '先读中国全景填补西方视角缺失,再读垂直行业、定价反弹、合规。',
+    sequence: ['17', '14', '19', '06'],
+    days: '关键动作:把"算法备案 + 大模型备案 + 内容标识 + 安全评估"做进 PRD;预留 2-6 个月监管周期;考虑昇腾/海光/英伟达三栈适配;企业合同必须有价格保护条款(应对 2026 涨价潮)。'
+  },
+  engineer: {
+    title: '工程师跨界做 Builder PM',
+    desc: '技术不缺,缺 product sense 和用户研究。直奔 Cagan 全集和访谈实战。',
+    sequence: ['01', '11', '15', '20', '14', '19'],
+    days: '关键提醒(Aakash 教练经验):在 product sense 题里永远从用户痛点开始,不从技术架构开始。"用 XGBoost 还是 LLM" 这种题如果先说 LLM 已被打低分。'
+  }
+};
+
+const pathBtns = document.querySelectorAll('.path-btn');
+const pathDisplay = document.getElementById('path-display');
+
+const chapterTitles = {
+  '01':'角色重塑','02':'工作流范式','03':'工具栈','04':'评测体系','05':'案例研究','06':'治理与安全','07':'行动手册',
+  '08':'Eval Cookbook','09':'多 Agent 架构','10':'协议生态','11':'UX 模式','12':'红队与安全','13':'Token 经济','14':'垂直行业','15':'Career',
+  '16':'Anthropic Claude Code 案例','17':'中国 AI PM','18':'新兴前沿','19':'Pricing','20':'工件模板'
+};
+const chapterFiles = {
+  '01':'01_role_transformation.md','02':'02_workflow_patterns.md','03':'03_tooling_stack.md','04':'04_evaluation_metrics.md',
+  '05':'05_case_studies.md','06':'06_governance_safety.md','07':'07_action_playbook.md','08':'08_eval_cookbook.md',
+  '09':'09_multi_agent_architecture.md','10':'10_protocol_ecosystem.md','11':'11_agent_ux_patterns.md','12':'12_red_team_safety.md',
+  '13':'13_token_economics.md','14':'14_vertical_pm.md','15':'15_career_playbook.md','16':'16_anthropic_claude_code_case.md',
+  '17':'17_china_ai_pm.md','18':'18_emerging_frontiers.md','19':'19_pricing_monetization.md','20':'20_artifact_templates.md'
+};
+
+function renderPath(key) {
+  const p = paths[key];
+  const seq = p.sequence.map((c, i) =>
+    `<a href="./${chapterFiles[c]}" class="inline-flex items-center gap-2 px-3 py-2 border border-current text-paper hover:bg-vermilion hover:border-vermilion transition-all">
+      <span class="num-display text-xl">${c}</span><span class="text-xs">${chapterTitles[c]}</span>
+    </a>`
+  ).join('<span class="text-vermilion text-xl mx-1">→</span>');
+
+  pathDisplay.innerHTML = `
+    <div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-2 mb-3">
+      <h3 class="font-serif-cn text-2xl font-bold">${p.title}</h3>
+      <div class="font-mono text-xs text-vermilion uppercase">${p.sequence.length} chapters</div>
+    </div>
+    <p class="text-sm mb-6 font-serif-cn" style="color: rgba(255,255,255,0.85)">${p.desc}</p>
+    <div class="text-xs font-mono uppercase mb-3" style="color: rgba(255,255,255,0.5)">RECOMMENDED ORDER</div>
+    <div class="flex flex-wrap items-center gap-y-3 mb-6">${seq}</div>
+    <div class="border-t pt-4" style="border-color: rgba(255,255,255,0.2)">
+      <div class="text-xs font-mono uppercase mb-2 text-vermilion">⊕ MILESTONE</div>
+      <p class="text-sm font-serif-cn" style="color: rgba(255,255,255,0.9)">${p.days}</p>
+    </div>
+  `;
+}
+
+pathBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    pathBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPath(btn.dataset.path);
+  });
+});
+
+renderPath('newcomer');
+</script>
+
+</body>
+</html>

@@ -3,6 +3,8 @@
 > **范围**:2026 年 3 月之后的产品经理工作流与工作范式最佳实践
 > **更新日期**:2026-05-10
 > **版本**:v2(经 3 轮 18 个研究 Agent 调研整合,跨 200+ 一手信源交叉验证)
+
+> 🖼️ **[一页可视化导览图 →](./infographic.html)** · 在浏览器里打开,12 个 Exhibit Panel + 交互式学习路径选择器,可在一屏内俯瞰整个知识库。
 > **来源**:Lenny's Newsletter / Anthropic Engineering / a16z / Latent Space / Hamel Husain / Eugene Yan / TechCrunch / MIT Tech Review / 各公司官方博客 / 中国信通院 / 五部门规章 / Maven 课程 / arXiv / Levels.fyi 等
 
 ---
